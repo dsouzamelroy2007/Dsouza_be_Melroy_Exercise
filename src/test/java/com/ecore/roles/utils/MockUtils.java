@@ -10,22 +10,27 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 
+import java.util.List;
 import java.util.UUID;
 
+import static com.ecore.roles.utils.TestData.GIANNI_USER;
+import static com.ecore.roles.utils.TestData.ORDINARY_CORAL_LYNX_TEAM;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
 public class MockUtils {
 
+    private static ObjectMapper objectMapper = new ObjectMapper();
+
     public static void mockGetUserById(MockRestServiceServer mockServer, UUID userId, User user) {
         try {
-            mockServer.expect(requestTo("http://test.com/users/" + userId))
+            mockServer.expect(ExpectedCount.manyTimes(), requestTo("http://test.com/users/" + userId))
                     .andExpect(method(HttpMethod.GET))
                     .andRespond(
                             withStatus(HttpStatus.OK)
                                     .contentType(MediaType.APPLICATION_JSON)
-                                    .body(new ObjectMapper().writeValueAsString(user)));
+                                    .body(objectMapper.writeValueAsString(user)));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -38,9 +43,37 @@ public class MockUtils {
                     .andRespond(
                             withStatus(HttpStatus.OK)
                                     .contentType(MediaType.APPLICATION_JSON)
-                                    .body(new ObjectMapper().writeValueAsString(team)));
+                                    .body(objectMapper.writeValueAsString(team)));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
     }
+
+    public static void mockGetTeams(MockRestServiceServer mockServer) {
+        try {
+            mockServer.expect(ExpectedCount.manyTimes(), requestTo("http://test.com/teams"))
+                    .andExpect(method(HttpMethod.GET))
+                    .andRespond(
+                            withStatus(HttpStatus.OK)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .body(objectMapper
+                                            .writeValueAsString(List.of(ORDINARY_CORAL_LYNX_TEAM()))));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void mockGetUsers(MockRestServiceServer mockServer) {
+        try {
+            mockServer.expect(ExpectedCount.manyTimes(), requestTo("http://test.com/users"))
+                    .andExpect(method(HttpMethod.GET))
+                    .andRespond(
+                            withStatus(HttpStatus.OK)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .body(objectMapper.writeValueAsString(List.of(GIANNI_USER()))));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

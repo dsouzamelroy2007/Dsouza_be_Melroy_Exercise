@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.UUID;
 
-public interface RolesApi {
+public interface RoleApi {
 
     ResponseEntity<RoleDto> createRole(
             RoleDto role);
@@ -15,5 +15,7 @@ public interface RolesApi {
 
     ResponseEntity<RoleDto> getRole(
             UUID roleId);
+
+    ResponseEntity<List<RoleDto>> getRolesByUserAndTeam(UUID userId, UUID teamId);
 
 }

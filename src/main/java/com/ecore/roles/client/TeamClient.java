@@ -1,7 +1,7 @@
 package com.ecore.roles.client;
 
-import com.ecore.roles.client.model.User;
-import com.ecore.roles.configuration.ClientsConfigurationProperties;
+import com.ecore.roles.client.model.Team;
+import com.ecore.roles.configuration.ClientConfigurationProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -14,22 +14,22 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Component
-public class UsersClient {
+public class TeamClient {
 
     private final RestTemplate restTemplate;
-    private final ClientsConfigurationProperties clientsConfigurationProperties;
+    private final ClientConfigurationProperties clientConfigurationProperties;
 
-    public ResponseEntity<User> getUser(UUID id) {
+    public ResponseEntity<Team> getTeam(UUID id) {
         return restTemplate.exchange(
-                clientsConfigurationProperties.getUsersApiHost() + "/" + id,
+                clientConfigurationProperties.getTeamsApiHost() + "/" + id,
                 HttpMethod.GET,
                 null,
-                User.class);
+                Team.class);
     }
 
-    public ResponseEntity<List<User>> getUsers() {
+    public ResponseEntity<List<Team>> getTeams() {
         return restTemplate.exchange(
-                clientsConfigurationProperties.getUsersApiHost(),
+                clientConfigurationProperties.getTeamsApiHost(),
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {});

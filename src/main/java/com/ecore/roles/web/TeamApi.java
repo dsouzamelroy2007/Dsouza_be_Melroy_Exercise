@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.UUID;
 
-public interface TeamsApi {
+public interface TeamApi {
 
     ResponseEntity<List<TeamDto>> getTeams();
 

@@ -6,7 +6,7 @@ import com.ecore.roles.model.Membership;
 import java.util.List;
 import java.util.UUID;
 
-public interface MembershipsService {
+public interface MembershipService {
 
     Membership assignRoleToMembership(Membership membership) throws ResourceNotFoundException;
 
