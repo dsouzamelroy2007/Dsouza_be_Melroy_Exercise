@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Setter
 @Component
 @ConfigurationProperties(prefix = "clients")
-public class ClientsConfigurationProperties {
+public class ClientConfigurationProperties {
 
     private String usersApiHost;
 

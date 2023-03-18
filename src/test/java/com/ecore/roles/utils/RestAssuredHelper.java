@@ -34,7 +34,7 @@ public class RestAssuredHelper {
         return sendRequest(givenNullableBody(RoleDto.fromModel(role))
                 .contentType(JSON)
                 .when()
-                .post("/v1/roles")
+                .put("/v1/roles")
                 .then());
     }
 
@@ -54,7 +54,7 @@ public class RestAssuredHelper {
 
     public static EcoreValidatableResponse getRole(UUID userId, UUID teamId) {
         return sendRequest(given()
-                .queryParam("teamMemberId", userId)
+                .queryParam("userId", userId)
                 .queryParam("teamId", teamId)
                 .when()
                 .get("/v1/roles/search")
@@ -65,7 +65,7 @@ public class RestAssuredHelper {
         return sendRequest(givenNullableBody(MembershipDto.fromModel(membership))
                 .contentType(JSON)
                 .when()
-                .post("/v1/roles/memberships")
+                .put("/v1/roles/memberships")
                 .then());
     }
 
@@ -73,7 +73,35 @@ public class RestAssuredHelper {
         return sendRequest(given()
                 .queryParam("roleId", roleId)
                 .when()
-                .get("/v1/roles/memberships/search")
+                .get("/v1/roles/memberships")
+                .then());
+    }
+
+    public static EcoreValidatableResponse getUser(UUID userId) {
+        return sendRequest(given()
+                .pathParam("userId", userId)
+                .when()
+                .get("/v1/users/{userId}")
+                .then());
+    }
+
+    public static EcoreValidatableResponse getTeam(UUID teamId) {
+        return sendRequest(given()
+                .pathParam("teamId", teamId)
+                .when()
+                .get("/v1/teams/{teamId}")
+                .then());
+    }
+
+    public static EcoreValidatableResponse getTeams() {
+        return sendRequest(when()
+                .get("/v1/teams")
+                .then());
+    }
+
+    public static EcoreValidatableResponse getUsers() {
+        return sendRequest(when()
+                .get("/v1/users")
                 .then());
     }
 

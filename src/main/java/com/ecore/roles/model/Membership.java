@@ -26,7 +26,7 @@ public class Membership {
     @Type(type = "uuid-char")
     private UUID id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 

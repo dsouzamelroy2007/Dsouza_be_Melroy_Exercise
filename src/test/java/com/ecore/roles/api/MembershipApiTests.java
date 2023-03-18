@@ -1,5 +1,6 @@
 package com.ecore.roles.api;
 
+import com.ecore.roles.client.model.User;
 import com.ecore.roles.model.Membership;
 import com.ecore.roles.model.Role;
 import com.ecore.roles.repository.MembershipRepository;
@@ -14,6 +15,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 import static com.ecore.roles.utils.MockUtils.mockGetTeamById;
+import static com.ecore.roles.utils.MockUtils.mockGetUserById;
 import static com.ecore.roles.utils.RestAssuredHelper.createMembership;
 import static com.ecore.roles.utils.RestAssuredHelper.getMemberships;
 import static com.ecore.roles.utils.TestData.*;
@@ -21,7 +23,7 @@ import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class MembershipsApiTests {
+public class MembershipApiTests {
 
     private final MembershipRepository membershipRepository;
     private final RestTemplate restTemplate;
@@ -32,7 +34,7 @@ public class MembershipsApiTests {
     private int port;
 
     @Autowired
-    public MembershipsApiTests(MembershipRepository membershipRepository, RestTemplate restTemplate) {
+    public MembershipApiTests(MembershipRepository membershipRepository, RestTemplate restTemplate) {
         this.membershipRepository = membershipRepository;
         this.restTemplate = restTemplate;
     }
@@ -48,6 +50,8 @@ public class MembershipsApiTests {
     void shouldCreateRoleMembership() {
         Membership expectedMembership = DEFAULT_MEMBERSHIP();
 
+        mockGetTeamById(mockServer, ORDINARY_CORAL_LYNX_TEAM_UUID, ORDINARY_CORAL_LYNX_TEAM());
+        mockGetUserById(mockServer, GIANNI_USER_UUID, GIANNI_USER());
         MembershipDto actualMembership = createDefaultMembership();
 
         assertThat(actualMembership.getId()).isNotNull();
@@ -98,6 +102,8 @@ public class MembershipsApiTests {
 
     @Test
     void shouldFailToCreateRoleMembershipWhenMembershipAlreadyExists() {
+        mockGetTeamById(mockServer, ORDINARY_CORAL_LYNX_TEAM_UUID, ORDINARY_CORAL_LYNX_TEAM());
+        mockGetUserById(mockServer, GIANNI_USER_UUID, GIANNI_USER());
         createDefaultMembership();
 
         createMembership(DEFAULT_MEMBERSHIP())
@@ -108,6 +114,8 @@ public class MembershipsApiTests {
     void shouldFailToCreateRoleMembershipWhenRoleDoesNotExist() {
         Membership expectedMembership = DEFAULT_MEMBERSHIP();
         expectedMembership.setRole(Role.builder().id(UUID_1).build());
+        mockGetTeamById(mockServer, expectedMembership.getTeamId(), ORDINARY_CORAL_LYNX_TEAM());
+        mockGetUserById(mockServer, expectedMembership.getUserId(), GIANNI_USER());
 
         createMembership(expectedMembership)
                 .validate(404, format("Role %s not found", UUID_1));
@@ -116,6 +124,7 @@ public class MembershipsApiTests {
     @Test
     void shouldFailToCreateRoleMembershipWhenTeamDoesNotExist() {
         Membership expectedMembership = DEFAULT_MEMBERSHIP();
+
         mockGetTeamById(mockServer, expectedMembership.getTeamId(), null);
 
         createMembership(expectedMembership)
@@ -123,9 +132,24 @@ public class MembershipsApiTests {
     }
 
     @Test
+    void shouldFailToCreateRoleMembershipWhenUserDoesNotExist() {
+        Membership expectedMembership = DEFAULT_MEMBERSHIP();
+        expectedMembership.setUserId(UUID_1);
+
+        mockGetTeamById(mockServer, expectedMembership.getTeamId(), ORDINARY_CORAL_LYNX_TEAM());
+        mockGetUserById(mockServer, expectedMembership.getUserId(), null);
+
+        createMembership(expectedMembership)
+                .validate(404, format("User %s not found", expectedMembership.getUserId()));
+    }
+
+    @Test
     void shouldFailToAssignRoleWhenMembershipIsInvalid() {
         Membership expectedMembership = INVALID_MEMBERSHIP();
+
         mockGetTeamById(mockServer, expectedMembership.getTeamId(), ORDINARY_CORAL_LYNX_TEAM());
+        mockGetUserById(mockServer, expectedMembership.getUserId(),
+                User.builder().id(expectedMembership.getUserId()).build());
 
         createMembership(expectedMembership)
                 .validate(400,
@@ -134,6 +158,9 @@ public class MembershipsApiTests {
 
     @Test
     void shouldGetAllMemberships() {
+        mockGetTeamById(mockServer, ORDINARY_CORAL_LYNX_TEAM_UUID, ORDINARY_CORAL_LYNX_TEAM());
+        mockGetUserById(mockServer, GIANNI_USER_UUID, GIANNI_USER());
+
         createDefaultMembership();
         Membership expectedMembership = DEFAULT_MEMBERSHIP();
 

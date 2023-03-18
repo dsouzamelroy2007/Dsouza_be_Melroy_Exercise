@@ -140,7 +140,7 @@
 					"response": []
 				},
 				{
-					"name": "/roles/memberships/search",
+					"name": "/roles/memberships",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -157,7 +157,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/v1/roles/memberships/search?roleId=1b3c333b-36e7-4b64-aa15-c22ed5908ce4",
+							"raw": "http://localhost:8080/v1/roles/memberships?roleId=1b3c333b-36e7-4b64-aa15-c22ed5908ce4",
 							"protocol": "http",
 							"host": [
 								"localhost"
